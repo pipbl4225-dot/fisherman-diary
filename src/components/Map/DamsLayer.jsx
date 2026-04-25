@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Marker, Popup } from 'react-leaflet';
+import { useEffect, useRef, useState } from 'react';
+import { Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { fetchDams, kindRu } from '../../utils/overpass.js';
 import styles from './DamsLayer.module.css';
@@ -14,31 +14,39 @@ function iconFor(kind) {
   return damIcon;
 }
 
-export default function DamsLayer({ position }) {
+export default function DamsLayer() {
+  const map     = useMap();
   const [dams,    setDams]    = useState([]);
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState(null);
-  const [radius,  setRadius]  = useState(30);
+  const timerRef = useRef(null);
 
-  const load = async (lat, lng, r) => {
+  const load = async () => {
+    const b = map.getBounds();
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchDams(lat, lng, r);
+      const data = await fetchDams(
+        b.getSouth(), b.getWest(), b.getNorth(), b.getEast(),
+      );
       setDams(data);
     } catch (e) {
-      setError(e.message);
+      setError(e.message.includes('429') ? 'Сервер перегружен, попробуйте позже' : e.message);
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (position) load(position.lat, position.lng, radius);
-  }, [position?.lat, position?.lng, radius]);
+  const scheduleLoad = () => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(load, 1500);
+  };
+
+  // Загрузка при монтировании и после остановки карты
+  useEffect(() => { scheduleLoad(); return () => clearTimeout(timerRef.current); }, []);
+  useMapEvents({ moveend: scheduleLoad });
 
   return (
     <>
-      {/* Маркеры на карте */}
       {dams.map((d) => (
         <Marker key={`${d.type}-${d.id}`} position={[d.lat, d.lng]} icon={iconFor(d.kind)}>
           <Popup>
@@ -52,13 +60,8 @@ export default function DamsLayer({ position }) {
         </Marker>
       ))}
 
-      {/* Статус-строка */}
-      {loading && (
-        <div className={styles.status}>Загрузка плотин…</div>
-      )}
-      {error && (
-        <div className={`${styles.status} ${styles.err}`}>Overpass: {error}</div>
-      )}
+      {loading && <div className={styles.status}>Загрузка плотин…</div>}
+      {error   && <div className={`${styles.status} ${styles.err}`}>{error}</div>}
     </>
   );
 }

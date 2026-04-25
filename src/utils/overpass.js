@@ -4,15 +4,15 @@ const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
  * Загрузить плотины и запруды в радиусе `radiusKm` от точки.
  * OSM теги: waterway=dam, waterway=weir, waterway=lock_gate
  */
-export async function fetchDams(lat, lng, radiusKm = 50) {
-  const r = radiusKm * 1000;
+export async function fetchDams(south, west, north, east) {
+  const bbox = `${south},${west},${north},${east}`;
   const query = `
 [out:json][timeout:25];
 (
-  node["waterway"~"^(dam|weir|lock_gate)$"](around:${r},${lat},${lng});
-  way["waterway"~"^(dam|weir|lock_gate)$"](around:${r},${lat},${lng});
-  node["man_made"="dam"](around:${r},${lat},${lng});
-  way["man_made"="dam"](around:${r},${lat},${lng});
+  node["waterway"~"^(dam|weir|lock_gate)$"](${bbox});
+  way["waterway"~"^(dam|weir|lock_gate)$"](${bbox});
+  node["man_made"="dam"](${bbox});
+  way["man_made"="dam"](${bbox});
 );
 out center tags;
   `.trim();

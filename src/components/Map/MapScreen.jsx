@@ -106,7 +106,7 @@ export default function MapScreen() {
         )}
 
         {/* Слой плотин */}
-        {damsLayer && <DamsLayer position={position} />}
+        {damsLayer && <DamsLayer />}
 
         {/* Точки рыбалки */}
         {spots.map((spot) => (
