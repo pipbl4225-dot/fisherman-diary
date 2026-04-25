@@ -1,0 +1,177 @@
+.screen {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header h2 { margin: 0; }
+
+/* --- Гидропост --- */
+.gaugeSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.gaugeTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gaugeLabel {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+}
+
+.changeBtn {
+  background: var(--color-surface-2);
+  color: var(--color-accent);
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.searchBox {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.searchList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.searchItem {
+  padding: 8px var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text);
+  transition: background 0.1s;
+}
+.searchItem:hover   { background: var(--color-surface-2); }
+.searchItem.activeItem { color: var(--color-accent); font-weight: 600; }
+
+.liveCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.liveHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gaugeName {
+  font-weight: 600;
+  color: var(--color-heading);
+  font-size: 14px;
+}
+
+.extLink {
+  font-size: 12px;
+  color: var(--color-accent);
+}
+
+.liveData {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.liveValue {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1;
+}
+.liveValue small {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.liveMeta {
+  display: flex;
+  gap: var(--spacing-md);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* --- Ручные замеры --- */
+.manualSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+.manualSection h3 { margin: 0; }
+
+.chartWrap {
+  height: 200px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.errorHint {
+  font-size: 13px;
+  color: var(--color-danger);
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 14px;
+  padding: 6px var(--spacing-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.rowDate  { color: var(--color-text-muted); flex: 1; }
+.rowVal   { font-weight: 600; color: var(--color-heading); }
+.rowFlow  { color: var(--color-text-muted); font-size: 12px; }

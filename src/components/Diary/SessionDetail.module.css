@@ -1,0 +1,111 @@
+.screen {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.back {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.danger {
+  background: var(--color-danger);
+  font-size: 14px;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta h2 { margin: 0; }
+
+.date {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.weather,
+.notes {
+  font-size: 14px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.section {}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.sectionHeader h3 { margin: 0; }
+
+.sectionHeader button {
+  font-size: 13px;
+  padding: 4px 12px;
+}
+
+.empty {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.catchList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.catchItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.catchMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.species {
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.catchMeta {
+  display: flex;
+  gap: var(--spacing-sm);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.deleteCatch {
+  background: transparent;
+  color: var(--color-text-muted);
+  padding: 4px 8px;
+  font-size: 16px;
+}
+
+.deleteCatch:hover {
+  color: var(--color-danger);
+}

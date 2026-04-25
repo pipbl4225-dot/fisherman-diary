@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#0d1117"/>
+
+  <!-- Water waves -->
+  <path d="M0 340 Q64 310 128 340 Q192 370 256 340 Q320 310 384 340 Q448 370 512 340 L512 512 L0 512 Z" fill="#0d3a6e" opacity="0.8"/>
+  <path d="M0 370 Q64 345 128 370 Q192 395 256 370 Q320 345 384 370 Q448 395 512 370 L512 512 L0 512 Z" fill="#0a2a52" opacity="0.9"/>
+
+  <!-- Fishing rod -->
+  <line x1="140" y1="80" x2="340" y2="300" stroke="#8b949e" stroke-width="8" stroke-linecap="round"/>
+  <!-- Rod tip shine -->
+  <circle cx="140" cy="80" r="6" fill="#58a6ff"/>
+
+  <!-- Fishing line -->
+  <path d="M340 300 Q380 260 370 350" stroke="#58a6ff" stroke-width="3" fill="none" opacity="0.8"/>
+
+  <!-- Hook -->
+  <path d="M370 350 Q385 390 360 400 Q340 408 338 390" stroke="#c9d1d9" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+  <!-- Fish body -->
+  <ellipse cx="258" cy="230" rx="70" ry="32" fill="#3fb950" transform="rotate(-20 258 230)"/>
+  <!-- Fish tail -->
+  <path d="M310 208 L345 185 L340 220 Z" fill="#2ea043" transform="rotate(-20 325 205)"/>
+  <!-- Fish belly shine -->
+  <ellipse cx="248" cy="232" rx="45" ry="16" fill="#4ac959" opacity="0.5" transform="rotate(-20 248 232)"/>
+  <!-- Fish eye -->
+  <circle cx="218" cy="222" r="8" fill="#0d1117" transform="rotate(-20 218 222)"/>
+  <circle cx="220" cy="220" r="3" fill="#ffffff" transform="rotate(-20 220 220)"/>
+  <!-- Fish scales hints -->
+  <path d="M250 218 Q260 208 270 218" stroke="#2ea043" stroke-width="2" fill="none" transform="rotate(-20 260 213)"/>
+  <path d="M265 224 Q275 214 285 224" stroke="#2ea043" stroke-width="2" fill="none" transform="rotate(-20 275 219)"/>
+
+  <!-- Bobber on water -->
+  <circle cx="368" cy="355" r="18" fill="#f85149"/>
+  <circle cx="368" cy="340" r="18" fill="#c9d1d9"/>
+  <rect x="366" y="322" width="4" height="18" rx="2" fill="#8b949e"/>
+</svg>
