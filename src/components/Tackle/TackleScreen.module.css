@@ -52,3 +52,56 @@
   font-size: 14px;
   color: var(--color-text-muted);
 }
+
+.tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.tab {
+  flex: 1;
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+  padding: 6px;
+  border-radius: var(--radius-md);
+}
+
+.activeTab {
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.rigCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+
+.rigInfo { display: flex; flex-direction: column; gap: 3px; }
+.rigName { font-weight: 600; color: var(--color-heading); }
+.rigMeta { font-size: 12px; color: var(--color-text-muted); }
+
+.rigActions { display: flex; gap: 6px; }
+
+.rigEdit {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+}
+
+.rigDel {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-danger, #f85149);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+}

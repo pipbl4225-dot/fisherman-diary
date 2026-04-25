@@ -19,3 +19,13 @@ db.version(2).stores({
   soundings: '++id, spotId, lat, lng, depth, bottomType, distance, landmark, notes, recordedAt',
   waterLevels: '++id, stationId, level, flow, recordedAt',
 });
+
+db.version(3).stores({
+  sessions:  '++id, date, locationName, lat, lng, weather, notes',
+  catches:   '++id, sessionId, species, weight, length, bait, tackle, time',
+  tackles:   '++id, name, type, brand, weight, color, notes',
+  spots:     '++id, name, lat, lng, depth, notes',
+  soundings: '++id, spotId, lat, lng, depth, bottomType, distance, landmark, notes, recordedAt',
+  waterLevels: '++id, stationId, level, flow, recordedAt',
+  rigs:      '++id, name, floatType, floatLoad, createdAt',
+});
