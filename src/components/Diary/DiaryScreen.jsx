@@ -3,12 +3,14 @@ import { useDiaryStore } from '../../store/diaryStore.js';
 import SessionCard from './SessionCard.jsx';
 import SessionForm from './SessionForm.jsx';
 import SessionDetail from './SessionDetail.jsx';
+import BackupSheet from '../Backup/BackupSheet.jsx';
 import styles from './DiaryScreen.module.css';
 
 export default function DiaryScreen() {
   const { sessions, loadSessions } = useDiaryStore();
   const [showForm,   setShowForm]   = useState(false);
   const [activeId,   setActiveId]   = useState(null);
+  const [showBackup, setShowBackup] = useState(false);
 
   useEffect(() => { loadSessions(); }, [loadSessions]);
 
@@ -22,7 +24,10 @@ export default function DiaryScreen() {
     <div className={styles.screen}>
       <header className={styles.header}>
         <h2>Дневник</h2>
-        <button onClick={() => setShowForm(true)}>+ Запись</button>
+        <div className={styles.headerActions}>
+          <button className={styles.cloudBtn} onClick={() => setShowBackup(true)} title="Google Drive бэкап">☁</button>
+          <button onClick={() => setShowForm(true)}>+ Запись</button>
+        </div>
       </header>
 
       {sessions.length === 0 ? (
@@ -35,7 +40,8 @@ export default function DiaryScreen() {
         </ul>
       )}
 
-      {showForm && <SessionForm onClose={() => setShowForm(false)} />}
+      {showForm   && <SessionForm   onClose={() => setShowForm(false)} />}
+      {showBackup && <BackupSheet   onClose={() => setShowBackup(false)} />}
     </div>
   );
 }
