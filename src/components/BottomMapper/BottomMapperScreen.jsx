@@ -13,11 +13,30 @@ import styles from './BottomMapperScreen.module.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, ChartTooltip);
 
-function depthColor(depth) {
-  if (depth == null) return '#58a6ff';
-  if (depth < 1)  return '#3fb950';
-  if (depth < 3)  return '#d29922';
-  if (depth < 6)  return '#f85149';
+const BOTTOM_COLORS = {
+  mud:   '#8B6914',
+  sand:  '#d4a017',
+  shell: '#9b59b6',
+  rock:  '#7f8c8d',
+  snag:  '#6d4c41',
+  weed:  '#27ae60',
+};
+
+const BOTTOM_LABELS = {
+  mud:   'Ил',
+  sand:  'Песок',
+  shell: 'Ракушка',
+  rock:  'Камень',
+  snag:  'Коряга',
+  weed:  'Трава',
+};
+
+function soundingColor(s) {
+  if (s.bottomType && BOTTOM_COLORS[s.bottomType]) return BOTTOM_COLORS[s.bottomType];
+  if (s.depth == null) return '#58a6ff';
+  if (s.depth < 1)  return '#3fb950';
+  if (s.depth < 3)  return '#d29922';
+  if (s.depth < 6)  return '#f85149';
   return '#8b949e';
 }
 
@@ -120,16 +139,25 @@ export default function BottomMapperScreen() {
                       key={s.id}
                       center={[s.lat, s.lng]}
                       radius={10}
-                      pathOptions={{ color: depthColor(s.depth), fillColor: depthColor(s.depth), fillOpacity: 0.8 }}
+                      pathOptions={{ color: soundingColor(s), fillColor: soundingColor(s), fillOpacity: 0.85 }}
                     >
                       <Tooltip permanent direction="top" offset={[0, -8]}>
-                        {s.depth} м
+                        <span>{s.depth} м{s.bottomType ? ` · ${BOTTOM_LABELS[s.bottomType]}` : ''}</span>
+                        {s.landmark && <span style={{display:'block',fontSize:'11px',opacity:0.8}}>{s.landmark}</span>}
                       </Tooltip>
                     </CircleMarker>
                   ))}
                 </MapContainer>
               </div>
               <p className={styles.hint}>Нажми на карте для добавления промера.</p>
+              <div className={styles.legend}>
+                {Object.entries(BOTTOM_LABELS).map(([id, label]) => (
+                  <span key={id} className={styles.legendItem}>
+                    <span className={styles.legendDot} style={{ background: BOTTOM_COLORS[id] }} />
+                    {label}
+                  </span>
+                ))}
+              </div>
             </>
           )}
 
