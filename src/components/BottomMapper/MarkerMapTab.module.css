@@ -1,0 +1,250 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.empty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.mapCard {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.mapInfo {
+  flex: 1;
+  padding: var(--spacing-md);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mapInfo:hover { background: var(--color-surface-2); }
+
+.mapCardName { font-weight: 600; color: var(--color-heading); }
+.mapMeta     { font-size: 12px; color: var(--color-text-muted); }
+
+.mapDel {
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-danger, #f85149);
+  padding: 0 14px;
+  height: 100%;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.createBtn {
+  align-self: flex-start;
+}
+
+/* ─── Редактор ─────────────────────────── */
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.editorHeader {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.mapName {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-heading);
+  padding: 4px 0;
+}
+
+.fanBtn {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 13px;
+  padding: 5px 12px;
+  white-space: nowrap;
+}
+
+.rays {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.addRayBtn {
+  align-self: flex-start;
+  background: var(--color-surface-2);
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* ─── Карточка луча ────────────────────── */
+.rayCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.rayHeader {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.rayName {
+  flex: 1;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.rayDel {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-danger, #f85149);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+}
+
+.ptTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  color: var(--color-text);
+}
+
+.ptTable th {
+  color: var(--color-text-muted);
+  font-weight: normal;
+  text-align: left;
+  padding: 2px 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ptTable td {
+  padding: 4px 6px;
+}
+
+.ptDel {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.addPtBtn {
+  align-self: flex-start;
+  font-size: 13px;
+  padding: 4px 12px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* ─── Форма замера ─────────────────────── */
+.pointForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.pfRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+.pfField {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pfField label { font-size: 11px; color: var(--color-text-muted); }
+
+.pfField input {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+.pfTypes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pfType {
+  padding: 4px 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pfTypeActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+}
+
+.pfActions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.pfActions button { flex: 1; font-size: 13px; }
+
+.pfCancel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+/* ─── Футер редактора ──────────────────── */
+.editorFooter {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.editorFooter button { flex: 1; }
+
+.cancelBtn {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}

@@ -29,3 +29,15 @@ db.version(3).stores({
   waterLevels: '++id, stationId, level, flow, recordedAt',
   rigs:      '++id, name, floatType, floatLoad, createdAt',
 });
+
+db.version(4).stores({
+  sessions:    '++id, date, locationName, lat, lng, weather, notes',
+  catches:     '++id, sessionId, species, weight, length, bait, tackle, time',
+  tackles:     '++id, name, type, brand, weight, color, notes',
+  spots:       '++id, name, lat, lng, depth, notes',
+  soundings:   '++id, spotId, lat, lng, depth, bottomType, distance, landmark, notes, recordedAt',
+  waterLevels: '++id, stationId, level, flow, recordedAt',
+  rigs:        '++id, name, floatType, floatLoad, createdAt',
+  markerMaps:  '++id, spotId, name, createdAt',
+  setups:      '++id, name, fishingType, createdAt',
+});

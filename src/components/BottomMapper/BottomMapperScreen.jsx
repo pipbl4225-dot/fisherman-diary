@@ -8,7 +8,8 @@ import {
 import { Line } from 'react-chartjs-2';
 import { useBottomStore } from '../../store/bottomStore.js';
 import { useMapStore } from '../../store/mapStore.js';
-import SoundingForm from './SoundingForm.jsx';
+import SoundingForm   from './SoundingForm.jsx';
+import MarkerMapTab   from './MarkerMapTab.jsx';
 import styles from './BottomMapperScreen.module.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, ChartTooltip);
@@ -50,7 +51,7 @@ export default function BottomMapperScreen() {
   const { spots, loadSpots } = useMapStore();
   const [pendingLatLng, setPendingLatLng] = useState(null);
   const [selectedSpot,  setSelectedSpot]  = useState(null);
-  const [view,          setView]          = useState('map'); // 'map' | 'profile'
+  const [view,          setView]          = useState('map'); // 'map' | 'profile' | 'marker'
 
   useEffect(() => { loadSpots(); }, [loadSpots]);
 
@@ -122,7 +123,8 @@ export default function BottomMapperScreen() {
         <>
           <div className={styles.tabs}>
             <button className={`${styles.tab} ${view === 'map'     ? styles.activeTab : ''}`} onClick={() => setView('map')}>Карта</button>
-            <button className={`${styles.tab} ${view === 'profile' ? styles.activeTab : ''}`} onClick={() => setView('profile')}>Профиль дна</button>
+            <button className={`${styles.tab} ${view === 'profile' ? styles.activeTab : ''}`} onClick={() => setView('profile')}>Профиль</button>
+            <button className={`${styles.tab} ${view === 'marker'  ? styles.activeTab : ''}`} onClick={() => setView('marker')}>Бланк</button>
           </div>
 
           {view === 'map' && (
@@ -169,6 +171,10 @@ export default function BottomMapperScreen() {
                 <Line data={profileData} options={profileOptions} />
               )}
             </div>
+          )}
+
+          {view === 'marker' && (
+            <MarkerMapTab spotId={selectedSpot.id} />
           )}
         </>
       )}
