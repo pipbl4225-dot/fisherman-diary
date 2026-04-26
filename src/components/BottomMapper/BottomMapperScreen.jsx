@@ -10,6 +10,7 @@ import { useBottomStore } from '../../store/bottomStore.js';
 import { useMapStore } from '../../store/mapStore.js';
 import SoundingForm   from './SoundingForm.jsx';
 import MarkerMapTab   from './MarkerMapTab.jsx';
+import SpotPhoto      from './SpotPhoto.jsx';
 import styles from './BottomMapperScreen.module.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, ChartTooltip);
@@ -71,7 +72,7 @@ export default function BottomMapperScreen() {
       backgroundColor: 'rgba(88,166,255,0.15)',
       tension: 0.4,
       fill: true,
-      pointBackgroundColor: sorted.map((s) => depthColor(s.depth)),
+      pointBackgroundColor: sorted.map((s) => soundingColor(s)),
     }],
   };
 
@@ -125,6 +126,7 @@ export default function BottomMapperScreen() {
             <button className={`${styles.tab} ${view === 'map'     ? styles.activeTab : ''}`} onClick={() => setView('map')}>Карта</button>
             <button className={`${styles.tab} ${view === 'profile' ? styles.activeTab : ''}`} onClick={() => setView('profile')}>Профиль</button>
             <button className={`${styles.tab} ${view === 'marker'  ? styles.activeTab : ''}`} onClick={() => setView('marker')}>Бланк</button>
+            <button className={`${styles.tab} ${view === 'photo'   ? styles.activeTab : ''}`} onClick={() => setView('photo')}>Фото</button>
           </div>
 
           {view === 'map' && (
@@ -175,6 +177,10 @@ export default function BottomMapperScreen() {
 
           {view === 'marker' && (
             <MarkerMapTab spotId={selectedSpot.id} />
+          )}
+
+          {view === 'photo' && (
+            <SpotPhoto spot={selectedSpot} />
           )}
         </>
       )}
