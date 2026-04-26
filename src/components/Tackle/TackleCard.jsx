@@ -3,6 +3,7 @@ import styles from './TackleCard.module.css';
 export default function TackleCard({ item, onEdit, onDelete }) {
   return (
     <li className={styles.card}>
+      {item.photo && <img className={styles.photo} src={item.photo} alt="" />}
       <div className={styles.main}>
         <span className={styles.name}>{item.name}</span>
         <span className={styles.type}>{item.type}</span>
