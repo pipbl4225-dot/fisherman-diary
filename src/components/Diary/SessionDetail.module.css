@@ -41,6 +41,67 @@
   margin: 0;
 }
 
+.ftBadge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+  width: fit-content;
+}
+
+.tipsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.tipsToggle {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  text-align: left;
+  font-size: 14px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  width: 100%;
+}
+
+.tipsBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.tipsGroup { display: flex; flex-direction: column; gap: 6px; }
+
+.tipsGroupTitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tipsList {
+  margin: 0;
+  padding-left: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tipItem {
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
 .section {}
 
 .sectionHeader {
