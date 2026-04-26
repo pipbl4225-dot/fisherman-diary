@@ -1,20 +1,45 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { db } from '../../db/index.js';
+import { useSetupStore } from '../../store/setupStore.js';
 import styles from './CatchForm.module.css';
 
 const nowTime = () => new Date().toTimeString().slice(0, 5);
 
+async function resizeImage(file, maxPx = 1000) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(c.toDataURL('image/jpeg', 0.78));
+    };
+    img.src = url;
+  });
+}
+
 export default function CatchForm({ sessionId, spotId, onClose }) {
-  const [species,  setSpecies]  = useState('');
-  const [weight,   setWeight]   = useState('');
-  const [length,   setLength]   = useState('');
-  const [bait,     setBait]     = useState('');
-  const [tackle,   setTackle]   = useState('');
+  const { setups, loadSetups } = useSetupStore();
+
+  const [species,   setSpecies]   = useState('');
+  const [weight,    setWeight]    = useState('');
+  const [length,    setLength]    = useState('');
+  const [bait,      setBait]      = useState('');
+  const [tackle,    setTackle]    = useState('');
+  const [setupId,   setSetupId]   = useState('');
   const [catchTime, setCatchTime] = useState(nowTime());
 
+  const [catchPhoto, setCatchPhoto] = useState(null);
   const [spotPhoto,  setSpotPhoto]  = useState(null);
   const [photoX,     setPhotoX]     = useState(null);
   const [photoY,     setPhotoY]     = useState(null);
+
+  useEffect(() => { loadSetups(); }, [loadSetups]);
 
   useEffect(() => {
     if (!spotId) return;
@@ -23,10 +48,22 @@ export default function CatchForm({ sessionId, spotId, onClose }) {
     });
   }, [spotId]);
 
+  useEffect(() => {
+    if (!setupId) return;
+    const s = setups.find((x) => String(x.id) === setupId);
+    if (s?.name) setTackle(s.name);
+  }, [setupId, setups]);
+
   const handlePhotoTap = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setPhotoX(parseFloat(((e.clientX - rect.left) / rect.width * 100).toFixed(1)));
     setPhotoY(parseFloat(((e.clientY - rect.top)  / rect.height * 100).toFixed(1)));
+  };
+
+  const handleCatchPhoto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCatchPhoto(await resizeImage(file, 1000));
   };
 
   const handleSubmit = async (e) => {
@@ -40,6 +77,7 @@ export default function CatchForm({ sessionId, spotId, onClose }) {
       bait:      bait.trim()   || null,
       tackle:    tackle.trim() || null,
       catchTime: catchTime || null,
+      photo:     catchPhoto ?? null,
       photoX:    photoX ?? null,
       photoY:    photoY ?? null,
       time:      new Date().toISOString(),
@@ -81,9 +119,39 @@ export default function CatchForm({ sessionId, spotId, onClose }) {
         <input value={bait} onChange={(e) => setBait(e.target.value)}
           placeholder="Червь, опарыш, воблер, блесна…" />
 
-        <label>Снасть</label>
+        {setups.length > 0 && (
+          <div className={styles.field}>
+            <label>Сборка</label>
+            <select value={setupId} onChange={(e) => setSetupId(e.target.value)}>
+              <option value="">— не выбрано —</option>
+              {setups.map((s) => (
+                <option key={s.id} value={String(s.id)}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        <label>Снасть {setupId ? '(из сборки)' : ''}</label>
         <input value={tackle} onChange={(e) => setTackle(e.target.value)}
           placeholder="Спиннинг, поплавочная, фидер…" />
+
+        {/* Фото рыбы */}
+        <div className={styles.photoSection}>
+          <label>Фото рыбы</label>
+          {catchPhoto ? (
+            <div className={styles.catchPreviewWrap}>
+              <img src={catchPhoto} className={styles.catchPreview} alt="улов" />
+              <button type="button" className={styles.clearPin}
+                onClick={() => setCatchPhoto(null)}>✕ Удалить фото</button>
+            </div>
+          ) : (
+            <label className={styles.photoUploadBtn}>
+              📷 Сфотографировать / выбрать
+              <input type="file" accept="image/*" capture="environment"
+                style={{ display: 'none' }} onChange={handleCatchPhoto} />
+            </label>
+          )}
+        </div>
 
         {/* Отметка на фото */}
         {spotPhoto && (

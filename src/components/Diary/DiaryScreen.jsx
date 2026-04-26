@@ -1,18 +1,32 @@
 import { useEffect, useState } from 'react';
 import { useDiaryStore } from '../../store/diaryStore.js';
+import { db } from '../../db/index.js';
 import SessionCard from './SessionCard.jsx';
 import SessionForm from './SessionForm.jsx';
 import SessionDetail from './SessionDetail.jsx';
+import StatsView from './StatsView.jsx';
 import BackupSheet from '../Backup/BackupSheet.jsx';
 import styles from './DiaryScreen.module.css';
 
 export default function DiaryScreen() {
   const { sessions, loadSessions } = useDiaryStore();
-  const [showForm,   setShowForm]   = useState(false);
-  const [activeId,   setActiveId]   = useState(null);
-  const [showBackup, setShowBackup] = useState(false);
+  const [showForm,    setShowForm]    = useState(false);
+  const [activeId,    setActiveId]    = useState(null);
+  const [showBackup,  setShowBackup]  = useState(false);
+  const [catchCounts, setCatchCounts] = useState({});
+  const [tab,         setTab]         = useState('list');
 
   useEffect(() => { loadSessions(); }, [loadSessions]);
+
+  useEffect(() => {
+    db.catches.toArray().then((rows) => {
+      const counts = {};
+      rows.filter((r) => !r.type || r.type === 'catch').forEach((r) => {
+        counts[r.sessionId] = (counts[r.sessionId] ?? 0) + 1;
+      });
+      setCatchCounts(counts);
+    });
+  }, [sessions]);
 
   const activeSession = sessions.find((s) => s.id === activeId) ?? null;
 
@@ -30,12 +44,19 @@ export default function DiaryScreen() {
         </div>
       </header>
 
-      {sessions.length === 0 ? (
+      <div className={styles.tabRow}>
+        <button className={`${styles.tabBtn} ${tab === 'list'  ? styles.tabActive : ''}`} onClick={() => setTab('list')}>Записи</button>
+        <button className={`${styles.tabBtn} ${tab === 'stats' ? styles.tabActive : ''}`} onClick={() => setTab('stats')}>Статистика</button>
+      </div>
+
+      {tab === 'stats' ? (
+        <StatsView />
+      ) : sessions.length === 0 ? (
         <p className={styles.empty}>Нет записей. Нажми «+ Запись» чтобы добавить первую рыбалку.</p>
       ) : (
         <ul className={styles.list}>
           {sessions.map((s) => (
-            <SessionCard key={s.id} session={s} onClick={() => setActiveId(s.id)} />
+            <SessionCard key={s.id} session={s} catchCount={catchCounts[s.id] ?? 0} onClick={() => setActiveId(s.id)} />
           ))}
         </ul>
       )}

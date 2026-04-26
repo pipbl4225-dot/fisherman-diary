@@ -8,26 +8,35 @@
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .back {
   background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
   color: var(--color-text);
   font-size: 14px;
 }
 
 .danger {
-  background: var(--color-danger);
+  background: transparent;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
   font-size: 14px;
 }
 
 .meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
 }
 
-.meta h2 { margin: 0; }
+.meta h2 { margin: 0; font-size: 17px; }
 
 .metaRow {
   display: flex;
@@ -142,11 +151,12 @@
   margin-bottom: var(--spacing-sm);
 }
 
-.sectionHeader h3 { margin: 0; }
+.sectionHeader h3 { margin: 0; font-size: 16px; }
 
 .sectionHeader button {
   font-size: 13px;
-  padding: 4px 12px;
+  padding: 5px 14px;
+  border-radius: var(--radius-lg);
 }
 
 .empty {
@@ -169,8 +179,10 @@
   justify-content: space-between;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-sm) var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  gap: var(--spacing-sm);
 }
 
 .catchMain {
@@ -238,4 +250,176 @@
   font-size: 11px;
   color: var(--color-accent);
   font-weight: 600;
+}
+
+/* ── Живая сессия ── */
+.liveHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: rgba(255, 59, 48, 0.12);
+  border: 1px solid rgba(255, 59, 48, 0.35);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.livePulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff3b30;
+  flex-shrink: 0;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+
+.liveLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ff3b30;
+  flex: 1;
+}
+
+.liveTimer {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.endBtn {
+  background: #ff3b30;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 14px;
+}
+
+/* ── Быстрые кнопки событий ── */
+.eventBtns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.evtCatch {
+  background: linear-gradient(135deg, #1e8c47, #16703a);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 0;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(30,140,71,0.35);
+}
+
+.evtBite {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 0;
+  border-radius: var(--radius-lg);
+}
+
+.evtLoss {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 0;
+  border-radius: var(--radius-lg);
+}
+
+.evtBreak {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 0;
+  border-radius: var(--radius-lg);
+}
+
+/* ── Тайм-лайн ── */
+.sectionH {
+  margin: 0 0 var(--spacing-sm);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tlItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.tlCatch {
+  border-color: rgba(63, 185, 80, 0.3);
+  background: rgba(63, 185, 80, 0.06);
+}
+
+.tlEvent {
+  background: var(--color-surface-2);
+}
+
+.tlWeather {
+  border-color: rgba(77, 158, 255, 0.2);
+  background: rgba(77, 158, 255, 0.06);
+}
+
+.tlTime {
+  font-size: 11px;
+  color: var(--color-accent);
+  font-weight: 600;
+  min-width: 36px;
+}
+
+.tlEmoji {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.tlText {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.tlDel {
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  padding: 2px 6px;
+}
+
+.tlDel:hover {
+  color: var(--color-danger);
+}
+
+/* ── Фото улова ── */
+.catchThumb {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
 }

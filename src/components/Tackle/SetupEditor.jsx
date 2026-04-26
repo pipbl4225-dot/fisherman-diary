@@ -2,8 +2,27 @@ import { useEffect, useState } from 'react';
 import { useTackleStore } from '../../store/tackleStore.js';
 import { useSetupStore }  from '../../store/setupStore.js';
 import { useRigStore }    from '../../store/rigStore.js';
+import { useMapStore }    from '../../store/mapStore.js';
 import { FISHING_TYPES }  from '../../utils/fishingTips.js';
 import styles from './SetupEditor.module.css';
+
+async function resizeImage(file, maxPx = 1000) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(c.toDataURL('image/jpeg', 0.78));
+    };
+    img.src = url;
+  });
+}
 
 const SLOTS = [
   { key: 'rod',    label: 'Удилище',    types: ['Удилище']          },
@@ -19,11 +38,14 @@ export default function SetupEditor({ setup, onClose }) {
   const { tackles, loadTackles }  = useTackleStore();
   const { addSetup, updateSetup } = useSetupStore();
   const { rigs, loadRigs }        = useRigStore();
+  const { spots, loadSpots }      = useMapStore();
 
   const [name,        setName]        = useState(setup?.name        ?? '');
   const [fishingType, setFishingType] = useState(setup?.fishingType ?? '');
   const [slots,       setSlots]       = useState(setup?.slots       ?? {});
   const [notes,       setNotes]       = useState(setup?.notes       ?? '');
+  const [spotId,      setSpotId]      = useState(setup?.spotId      ?? '');
+  const [photo,       setPhoto]       = useState(setup?.photo       ?? null);
 
   // Поводок
   const [ldDiam,  setLdDiam]  = useState(setup?.leader?.diameter ?? '');
@@ -42,7 +64,7 @@ export default function SetupEditor({ setup, onClose }) {
   const [suggestedRig, setSuggestedRig] = useState(null);
   const [rigId,        setRigId]        = useState(setup?.rigId ?? null);
 
-  useEffect(() => { loadTackles(); loadRigs(); }, [loadTackles, loadRigs]);
+  useEffect(() => { loadTackles(); loadRigs(); loadSpots(); }, [loadTackles, loadRigs, loadSpots]);
 
   // Когда выбирается поплавок — ищем подходящую огрузку
   useEffect(() => {
@@ -60,6 +82,12 @@ export default function SetupEditor({ setup, onClose }) {
   const lineDiam   = lineTackle?.diameter ?? null;
 
   const linkedRig = rigId ? rigs.find((r) => r.id === rigId) : null;
+
+  const handlePhoto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhoto(await resizeImage(file, 1000));
+  };
 
   const save = async () => {
     const leader = (ldDiam || ldLen || hookId)
@@ -82,6 +110,8 @@ export default function SetupEditor({ setup, onClose }) {
       swivel,
       shotAbove,
       shotOnLeader,
+      spotId: spotId || null,
+      photo:  photo  ?? null,
     };
     if (setup?.id) await updateSetup(setup.id, data);
     else           await addSetup(data);
@@ -236,6 +266,40 @@ export default function SetupEditor({ setup, onClose }) {
         onChange={(e) => setNotes(e.target.value)}
         placeholder="Заметки к сборке…"
       />
+
+      {/* ── Фото снасти ── */}
+      <div className={styles.section}>
+        <p className={styles.sectionTitle}>Фото сборки</p>
+        {photo ? (
+          <div className={styles.photoWrap}>
+            <img src={photo} className={styles.photo} alt="сборка" />
+            <button type="button" className={styles.photoRemove} onClick={() => setPhoto(null)}>✕ Удалить</button>
+          </div>
+        ) : (
+          <label className={styles.photoUploadBtn}>
+            📷 Сфотографировать / выбрать
+            <input type="file" accept="image/*" capture="environment"
+              style={{ display: 'none' }} onChange={handlePhoto} />
+          </label>
+        )}
+      </div>
+
+      {/* ── Привязка к месту ── */}
+      {spots.length > 0 && (
+        <div className={styles.section}>
+          <p className={styles.sectionTitle}>Место ловли</p>
+          <select
+            className={styles.slotSelect}
+            value={spotId}
+            onChange={(e) => setSpotId(e.target.value)}
+          >
+            <option value="">— не привязано —</option>
+            {spots.map((s) => (
+              <option key={s.id} value={s.id}>{s.name || `Точка ${s.id}`}</option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 }

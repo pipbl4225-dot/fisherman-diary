@@ -1,0 +1,254 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.loading {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}
+
+/* ── Сводка ── */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.sumCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm) var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sumVal {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.1;
+}
+
+.sumLabel {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ── Секции ── */
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* ── Лучший улов ── */
+.bestCard {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bestFish {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.bestWeight {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.bestDate {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  width: 100%;
+}
+
+/* ── Месячный чарт ── */
+.monthChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.monthCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  height: 100%;
+}
+
+.monthBar {
+  width: 100%;
+  background: var(--color-accent-dim);
+  border: 1px solid var(--color-accent);
+  border-radius: 4px 4px 0 0;
+  min-height: 3px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  transition: height 0.3s;
+}
+
+.monthCnt {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--color-accent);
+  padding-top: 2px;
+}
+
+.monthName {
+  font-size: 8px;
+  color: var(--color-text-muted);
+  position: absolute;
+  bottom: 0;
+}
+
+/* ── Рейтинговый список ── */
+.rankList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.rankItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rankPos {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  min-width: 22px;
+}
+
+.rankName {
+  font-size: 13px;
+  color: var(--color-text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rankMeta {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.rankBar {
+  width: 60px;
+  height: 6px;
+  background: var(--color-surface-2);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.rankFill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 3px;
+  min-width: 3px;
+}
+
+.rankCnt {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-heading);
+  min-width: 22px;
+  text-align: right;
+}
+
+/* ── Вид ловли ── */
+.ftList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ftItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.ftCnt {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* ── События ── */
+.evtRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.evtCard {
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.evtVal {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.evtHint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 0;
+  text-align: center;
+}
