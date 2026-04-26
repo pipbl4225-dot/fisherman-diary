@@ -55,14 +55,35 @@
   gap: var(--spacing-md);
 }
 
-.editorHeader {
-  display: flex;
-  gap: var(--spacing-sm);
-  align-items: center;
+.diagramWrap {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  background: white;
 }
 
+.diagramHint {
+  text-align: center;
+  font-size: 12px;
+  color: #aaa;
+  padding: 4px 0 8px;
+  margin: 0;
+  background: white;
+}
+
+.howTo {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.howTo p { margin: 2px 0; }
+
 .mapName {
-  flex: 1;
   font-size: 16px;
   font-weight: 600;
   background: transparent;
@@ -70,15 +91,7 @@
   border-bottom: 1px solid var(--color-border);
   color: var(--color-heading);
   padding: 4px 0;
-}
-
-.fanBtn {
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  font-size: 13px;
-  padding: 5px 12px;
-  white-space: nowrap;
+  width: 100%;
 }
 
 .rays {
@@ -109,6 +122,20 @@
   display: flex;
   gap: var(--spacing-sm);
   align-items: center;
+}
+
+.rayIndex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .rayName {
