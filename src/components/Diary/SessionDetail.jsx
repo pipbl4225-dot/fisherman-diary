@@ -17,6 +17,14 @@ export default function SessionDetail({ session, onBack }) {
   const [catches,    setCatches]    = useState([]);
   const [showForm,   setShowForm]   = useState(false);
   const [showTips,   setShowTips]   = useState(false);
+  const [spotPhoto,  setSpotPhoto]  = useState(null);
+
+  useEffect(() => {
+    if (!session.spotId) return;
+    db.spots.get(session.spotId).then((s) => {
+      if (s?.photo) setSpotPhoto(s.photo);
+    });
+  }, [session.spotId]);
 
   const ft   = FISHING_TYPES.find((t) => t.id === session.fishingType);
   const tips = session.fishingType ? TIPS[session.fishingType] : null;
@@ -104,6 +112,20 @@ export default function SessionDetail({ session, onBack }) {
           <button onClick={() => setShowForm(true)}>+ Рыба</button>
         </div>
 
+        {/* Фото с метками поклёвок */}
+        {spotPhoto && catches.some((c) => c.photoX != null) && (
+          <div className={styles.catchPhotoWrap}>
+            <img src={spotPhoto} className={styles.catchPhoto} alt="место" />
+            {catches.filter((c) => c.photoX != null).map((c) => (
+              <div key={c.id} className={styles.catchPin}
+                style={{ left: `${c.photoX}%`, top: `${c.photoY}%` }}
+                title={c.species}>
+                🐟
+              </div>
+            ))}
+          </div>
+        )}
+
         {catches.length === 0 ? (
           <p className={styles.empty}>Улов не добавлен.</p>
         ) : (
@@ -111,17 +133,19 @@ export default function SessionDetail({ session, onBack }) {
             {catches.map((c) => (
               <li key={c.id} className={styles.catchItem}>
                 <div className={styles.catchMain}>
-                  <span className={styles.species}>{c.species}</span>
+                  <div className={styles.catchTop}>
+                    <span className={styles.species}>{c.species}</span>
+                    {c.catchTime && <span className={styles.catchTime}>{c.catchTime}</span>}
+                  </div>
                   <div className={styles.catchMeta}>
                     {c.weight && <span>{c.weight} кг</span>}
                     {c.length && <span>{c.length} см</span>}
-                    {c.bait   && <span>наживка: {c.bait}</span>}
+                    {c.bait   && <span>🪱 {c.bait}</span>}
+                    {c.tackle && <span>🎣 {c.tackle}</span>}
+                    {c.photoX != null && <span>📍 на фото</span>}
                   </div>
                 </div>
-                <button
-                  className={styles.deleteCatch}
-                  onClick={() => handleDeleteCatch(c.id)}
-                >✕</button>
+                <button className={styles.deleteCatch} onClick={() => handleDeleteCatch(c.id)}>✕</button>
               </li>
             ))}
           </ul>
@@ -131,6 +155,7 @@ export default function SessionDetail({ session, onBack }) {
       {showForm && (
         <CatchForm
           sessionId={session.id}
+          spotId={session.spotId ?? null}
           onClose={() => { setShowForm(false); loadCatches(); }}
         />
       )}
