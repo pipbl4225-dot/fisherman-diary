@@ -5,13 +5,14 @@ import { FISHING_TYPES }  from '../../utils/fishingTips.js';
 import styles from './SetupEditor.module.css';
 
 const SLOTS = [
-  { key: 'rod',    label: 'Удилище',   type: 'Удилище'  },
-  { key: 'reel',   label: 'Катушка',   type: 'Катушка'  },
-  { key: 'line',   label: 'Леска',     type: 'Леска'    },
-  { key: 'hook',   label: 'Крючок',    type: 'Крючок'   },
-  { key: 'float',  label: 'Поплавок',  type: 'Поплавок' },
-  { key: 'weight', label: 'Грузило',   type: 'Грузило'  },
-  { key: 'bait',   label: 'Приманка',  type: 'Приманка' },
+  { key: 'rod',       label: 'Удилище',   types: ['Удилище']           },
+  { key: 'reel',      label: 'Катушка',   types: ['Катушка']           },
+  { key: 'line',      label: 'Леска/Шнур', types: ['Леска', 'Шнур']   },
+  { key: 'hook',      label: 'Крючок',    types: ['Крючок']            },
+  { key: 'float',     label: 'Поплавок',  types: ['Поплавок']          },
+  { key: 'weight',    label: 'Грузило',   types: ['Грузило']           },
+  { key: 'bait',      label: 'Приманка',  types: ['Приманка']          },
+  { key: 'jig',       label: 'Мормышка',  types: ['Мормышка']          },
 ];
 
 export default function SetupEditor({ setup, onClose }) {
@@ -67,7 +68,7 @@ export default function SetupEditor({ setup, onClose }) {
       {/* Слоты снастей */}
       <div className={styles.slots}>
         {SLOTS.map((slot) => {
-          const options = tackles.filter((t) => t.type === slot.type);
+          const options = tackles.filter((t) => slot.types.includes(t.type));
           const val = slots[slot.key] ?? '';
           return (
             <div key={slot.key} className={styles.slot}>

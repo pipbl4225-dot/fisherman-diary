@@ -9,7 +9,7 @@ import RigEditor    from './RigEditor.jsx';
 import SetupEditor  from './SetupEditor.jsx';
 import styles from './TackleScreen.module.css';
 
-const TYPES = ['Все', 'Удилище', 'Катушка', 'Леска', 'Крючок', 'Приманка', 'Поплавок', 'Грузило', 'Прочее'];
+const TYPES = ['Все', 'Удилище', 'Катушка', 'Леска', 'Шнур', 'Крючок', 'Приманка', 'Поплавок', 'Грузило', 'Мормышка', 'Прочее'];
 
 export default function TackleScreen() {
   const { tackles, loadTackles, deleteTackle } = useTackleStore();

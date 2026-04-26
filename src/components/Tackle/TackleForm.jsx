@@ -3,27 +3,29 @@ import { useTackleStore } from '../../store/tackleStore.js';
 import { db } from '../../db/index.js';
 import styles from './TackleForm.module.css';
 
-const TYPES = ['Удилище', 'Катушка', 'Леска', 'Крючок', 'Приманка', 'Поплавок', 'Грузило', 'Прочее'];
+const TYPES = ['Удилище', 'Катушка', 'Леска', 'Шнур', 'Крючок', 'Приманка', 'Поплавок', 'Грузило', 'Мормышка', 'Прочее'];
 
 export default function TackleForm({ item, onClose }) {
   const { addTackle, loadTackles } = useTackleStore();
-  const [name,   setName]   = useState(item?.name   ?? '');
-  const [type,   setType]   = useState(item?.type   ?? TYPES[0]);
-  const [brand,  setBrand]  = useState(item?.brand  ?? '');
-  const [weight, setWeight] = useState(item?.weight ?? '');
-  const [color,  setColor]  = useState(item?.color  ?? '');
-  const [notes,  setNotes]  = useState(item?.notes  ?? '');
+  const [name,     setName]     = useState(item?.name     ?? '');
+  const [type,     setType]     = useState(item?.type     ?? TYPES[0]);
+  const [brand,    setBrand]    = useState(item?.brand    ?? '');
+  const [weight,   setWeight]   = useState(item?.weight   ?? '');
+  const [diameter, setDiameter] = useState(item?.diameter ?? '');
+  const [color,    setColor]    = useState(item?.color    ?? '');
+  const [notes,    setNotes]    = useState(item?.notes    ?? '');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
     const data = {
-      name:   name.trim(),
+      name:     name.trim(),
       type,
-      brand:  brand.trim()  || null,
-      weight: weight ? parseFloat(weight) : null,
-      color:  color.trim()  || null,
-      notes:  notes.trim()  || null,
+      brand:    brand.trim()    || null,
+      weight:   weight          ? parseFloat(weight)   : null,
+      diameter: diameter        ? parseFloat(diameter) : null,
+      color:    color.trim()    || null,
+      notes:    notes.trim()    || null,
     };
     if (item) {
       await db.tackles.update(item.id, data);
@@ -50,8 +52,19 @@ export default function TackleForm({ item, onClose }) {
         <label>Бренд</label>
         <input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Shimano, Daiwa..." />
 
-        <label>Вес (г)</label>
-        <input type="number" step="0.1" min="0" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="0.0" />
+        {(type === 'Леска' || type === 'Шнур') && (
+          <>
+            <label>Диаметр (мм)</label>
+            <input type="number" step="0.01" min="0" value={diameter} onChange={(e) => setDiameter(e.target.value)} placeholder="0.00" />
+          </>
+        )}
+
+        {type !== 'Леска' && type !== 'Шнур' && (
+          <>
+            <label>{type === 'Грузило' || type === 'Мормышка' ? 'Вес (г)' : 'Вес (г)'}</label>
+            <input type="number" step="0.1" min="0" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="0.0" />
+          </>
+        )}
 
         <label>Цвет</label>
         <input value={color} onChange={(e) => setColor(e.target.value)} placeholder="Красный, #FF0000..." />

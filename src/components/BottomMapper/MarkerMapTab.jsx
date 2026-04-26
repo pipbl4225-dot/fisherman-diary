@@ -185,7 +185,7 @@ export default function MarkerMapTab({ spotId }) {
                 onDelete={() => deleteRay(ray._uid)}
               />
             ))}
-            {activeMap.rays.length < 5 && (
+            {activeMap.rays.length < 9 && (
               <button className={styles.addRayBtn} onClick={addRay}>+ Луч / ориентир</button>
             )}
           </div>
