@@ -4,9 +4,10 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useMapStore }    from '../../store/mapStore.js';
 import { useGeolocation } from '../../hooks/useGeolocation.js';
-import SpotForm   from './SpotForm.jsx';
-import DamsLayer  from './DamsLayer.jsx';
-import DamsList   from './DamsList.jsx';
+import SpotForm      from './SpotForm.jsx';
+import DamsLayer     from './DamsLayer.jsx';
+import DamsList      from './DamsList.jsx';
+import CheckInSheet  from './CheckInSheet.jsx';
 import styles from './MapScreen.module.css';
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -63,10 +64,10 @@ export default function MapScreen() {
   const { position, loading, refresh } = useGeolocation();
   const [pendingLatLng, setPendingLatLng] = useState(null);
   const [centeredOnce,  setCenteredOnce]  = useState(false);
-  const [showDams,      setShowDams]      = useState(false);
   const [showDamsList,  setShowDamsList]  = useState(false);
   const [damsLayer,     setDamsLayer]     = useState(false);
   const [flyPoint,      setFlyPoint]      = useState(null);
+  const [checkInSpot,   setCheckInSpot]   = useState(null);
 
   useEffect(() => { loadSpots(); }, [loadSpots]);
 
@@ -116,6 +117,12 @@ export default function MapScreen() {
                 <strong>{spot.name}</strong>
                 {spot.depth && <span>Глубина: {spot.depth} м</span>}
                 {spot.notes && <p>{spot.notes}</p>}
+                <button
+                  className={styles.checkInBtn}
+                  onClick={() => setCheckInSpot(spot)}
+                >
+                  📍 Прибыл на точку
+                </button>
                 <div className={styles.navBtns}>
                   <a href={`https://yandex.ru/maps/?rtext=~${spot.lat},${spot.lng}&rtt=auto`}
                     target="_blank" rel="noopener noreferrer" className={styles.navBtn}>🗺 Яндекс</a>
@@ -153,6 +160,13 @@ export default function MapScreen() {
         <DamsList
           onClose={() => setShowDamsList(false)}
           onFlyTo={handleFlyTo}
+        />
+      )}
+
+      {checkInSpot && (
+        <CheckInSheet
+          spot={checkInSpot}
+          onClose={() => setCheckInSpot(null)}
         />
       )}
     </div>
