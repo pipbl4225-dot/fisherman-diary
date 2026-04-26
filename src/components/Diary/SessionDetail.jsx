@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { db } from '../../db/index.js';
 import { useDiaryStore } from '../../store/diaryStore.js';
 import { FISHING_TYPES, TIPS } from '../../utils/fishingTips.js';
+import { weatherStr } from '../../utils/weather.js';
 import CatchForm from './CatchForm.jsx';
 import styles from './SessionDetail.module.css';
 
@@ -47,10 +48,31 @@ export default function SessionDetail({ session, onBack }) {
 
       <div className={styles.meta}>
         <h2>{session.locationName || 'Место не указано'}</h2>
-        <span className={styles.date}>{formatDate(session.date)}</span>
-        {ft && <span className={styles.ftBadge}>{ft.emoji} {ft.label}</span>}
-        {session.weather && <p className={styles.weather}>🌤 {session.weather}</p>}
-        {session.notes   && <p className={styles.notes}>{session.notes}</p>}
+        <div className={styles.metaRow}>
+          <span className={styles.date}>{formatDate(session.date)}</span>
+          {session.timeStart && (
+            <span className={styles.time}>
+              {session.timeStart}{session.timeEnd ? ` – ${session.timeEnd}` : ''}
+            </span>
+          )}
+          {ft && <span className={styles.ftBadge}>{ft.emoji} {ft.label}</span>}
+        </div>
+        {session.weather && (
+          <div className={styles.weatherBlock}>
+            {typeof session.weather === 'object' ? (
+              <div className={styles.weatherGrid}>
+                {session.weather.emoji && <span className={styles.wEmoji}>{session.weather.emoji}</span>}
+                {session.weather.condition  && <span>{session.weather.condition}</span>}
+                {session.weather.temp  != null && <span>🌡 {session.weather.temp > 0 ? '+' : ''}{session.weather.temp}°C</span>}
+                {session.weather.wind  != null && <span>💨 {session.weather.windDir} {session.weather.wind} м/с</span>}
+                {session.weather.pressure    && <span>🔵 {session.weather.pressure} гПа</span>}
+              </div>
+            ) : (
+              <p className={styles.weather}>🌤 {session.weather}</p>
+            )}
+          </div>
+        )}
+        {session.notes && <p className={styles.notes}>{session.notes}</p>}
       </div>
 
       {/* Советы по виду ловли */}

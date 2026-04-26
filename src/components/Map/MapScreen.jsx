@@ -116,6 +116,14 @@ export default function MapScreen() {
                 <strong>{spot.name}</strong>
                 {spot.depth && <span>Глубина: {spot.depth} м</span>}
                 {spot.notes && <p>{spot.notes}</p>}
+                <div className={styles.navBtns}>
+                  <a href={`https://yandex.ru/maps/?rtext=~${spot.lat},${spot.lng}&rtt=auto`}
+                    target="_blank" rel="noopener noreferrer" className={styles.navBtn}>🗺 Яндекс</a>
+                  <a href={`https://2gis.ru/routeSearch/rsType/auto/to/${spot.lng},${spot.lat}`}
+                    target="_blank" rel="noopener noreferrer" className={styles.navBtn}>🗺 2ГИС</a>
+                  <a href={`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`}
+                    target="_blank" rel="noopener noreferrer" className={styles.navBtn}>🗺 Google</a>
+                </div>
                 <button className={styles.deleteBtn} onClick={() => deleteSpot(spot.id)}>Удалить</button>
               </div>
             </Popup>

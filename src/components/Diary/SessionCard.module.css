@@ -19,9 +19,26 @@
   margin-bottom: 4px;
 }
 
+.dateWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .date {
   font-size: 12px;
   color: var(--color-text-muted);
+}
+
+.time {
+  font-size: 11px;
+  color: var(--color-accent);
+}
+
+.weatherLine {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 3px 0 0;
 }
 
 .badge {

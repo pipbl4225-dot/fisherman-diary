@@ -27,6 +27,24 @@
   color: #444;
 }
 
+.navBtns {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.navBtn {
+  font-size: 11px;
+  padding: 3px 7px;
+  background: #f0f4ff;
+  border: 1px solid #c5d0e8;
+  border-radius: 4px;
+  color: #1a5fbf;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 .deleteBtn {
   margin-top: 6px;
   background: #e53935;

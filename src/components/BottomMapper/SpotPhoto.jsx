@@ -3,6 +3,7 @@ import { db } from '../../db/index.js';
 import styles from './SpotPhoto.module.css';
 
 const TYPES = [
+  { id: 'bite',    label: 'Поклёвка', emoji: '🐟' },
   { id: 'snag',    label: 'Коряга',   emoji: '🪵' },
   { id: 'hookup',  label: 'Зацеп',    emoji: '🎣' },
   { id: 'pit',     label: 'Яма',      emoji: '🔵' },

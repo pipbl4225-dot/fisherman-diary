@@ -3,6 +3,70 @@ import { db } from '../../db/index.js';
 import FanDiagram from './FanDiagram.jsx';
 import styles from './MarkerMapTab.module.css';
 
+// ─── Анализ маркерной карты ──────────────────────────────────────────────────
+function analyzeMap(rays) {
+  const results = [];
+  if (!rays.length) return results;
+
+  // Перспективные точки: ракушка или камень + глубина 1.5–5м
+  const goodPts = [];
+  rays.forEach((ray, ri) => {
+    ray.points.forEach((pt) => {
+      if ((pt.bottomType === 'shell' || pt.bottomType === 'rock') && pt.depth >= 1.5 && pt.depth <= 6) {
+        goodPts.push({ ray: ray.landmark || `Луч ${ri+1}`, dist: pt.distance, depth: pt.depth, type: pt.bottomType });
+      }
+    });
+  });
+  if (goodPts.length) {
+    results.push({
+      icon: '⭐',
+      title: 'Перспективные точки',
+      items: goodPts.map((p) => `${p.ray}: ${p.dist} об., ${p.depth}м — ${p.type === 'shell' ? 'ракушка' : 'камень'}`),
+    });
+  }
+
+  // Бровки: перепад глубины >0.7м между соседними замерами
+  const ledges = [];
+  rays.forEach((ray, ri) => {
+    const pts = [...ray.points].sort((a, b) => a.distance - b.distance);
+    for (let i = 1; i < pts.length; i++) {
+      const diff = Math.abs(pts[i].depth - pts[i-1].depth);
+      if (diff >= 0.7) {
+        ledges.push(`${ray.landmark || `Луч ${ri+1}`}: ${pts[i-1].distance}–${pts[i].distance} об. (${pts[i-1].depth}→${pts[i].depth}м)`);
+      }
+    }
+  });
+  if (ledges.length) {
+    results.push({ icon: '📍', title: 'Бровки (перепад глубины)', items: ledges });
+  }
+
+  // Ямы: точки глубже 4м
+  const pits = [];
+  rays.forEach((ray, ri) => {
+    ray.points.filter((p) => p.depth >= 4).forEach((p) => {
+      pits.push(`${ray.landmark || `Луч ${ri+1}`}: ${p.distance} об., ${p.depth}м`);
+    });
+  });
+  if (pits.length) {
+    results.push({ icon: '🔵', title: 'Ямы (>4 м)', items: pits });
+  }
+
+  // Предупреждения: сплошной ил → плохо для ловли на дне
+  const mudRays = rays.filter((ray) => ray.points.length > 0 && ray.points.every((p) => p.bottomType === 'mud'));
+  if (mudRays.length) {
+    results.push({
+      icon: '⚠️',
+      title: 'Сплошной ил — осторожно',
+      items: mudRays.map((r, i) => `${r.landmark || `Луч ${i+1}`}: все замеры ил — наживка тонет в грунте`),
+    });
+  }
+
+  if (!results.length) {
+    results.push({ icon: 'ℹ️', title: 'Нет данных для анализа', items: ['Добавьте замеры с типом грунта'] });
+  }
+  return results;
+}
+
 const BOTTOM_TYPES = [
   { id: 'mud',   label: 'Ил',      emoji: '🟤' },
   { id: 'sand',  label: 'Песок',   emoji: '🟡' },
@@ -131,8 +195,9 @@ function RayCard({ ray, index, onUpdate, onDelete }) {
 
 // ─── Главный компонент ───────────────────────────────────────────────────────
 export default function MarkerMapTab({ spotId }) {
-  const [maps,      setMaps]      = useState([]);
-  const [activeMap, setActiveMap] = useState(null);
+  const [maps,       setMaps]       = useState([]);
+  const [activeMap,  setActiveMap]  = useState(null);
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   const loadMaps = async () => {
     const rows = await db.markerMaps.where('spotId').equals(spotId).toArray();
@@ -220,6 +285,27 @@ export default function MarkerMapTab({ spotId }) {
             </button>
           )}
         </div>
+
+        {/* Анализ */}
+        {activeMap.rays.some((r) => r.points.length > 0) && (
+          <div className={styles.analysisSection}>
+            <button className={styles.analysisToggle} onClick={() => setShowAnalysis((v) => !v)}>
+              🔍 Анализ перспективных мест {showAnalysis ? '▲' : '▼'}
+            </button>
+            {showAnalysis && (
+              <div className={styles.analysisBody}>
+                {analyzeMap(activeMap.rays).map((block) => (
+                  <div key={block.title} className={styles.analysisBlock}>
+                    <p className={styles.analysisTitle}>{block.icon} {block.title}</p>
+                    <ul className={styles.analysisList}>
+                      {block.items.map((item, i) => <li key={i}>{item}</li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className={styles.editorFooter}>
           <button className={styles.cancelBtn} onClick={() => { setActiveMap(null); loadMaps(); }}>Отмена</button>

@@ -29,10 +29,41 @@
 
 .meta h2 { margin: 0; }
 
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
 .date {
   font-size: 13px;
   color: var(--color-text-muted);
 }
+
+.time {
+  font-size: 13px;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.weatherBlock {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.weatherGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 13px;
+  color: var(--color-text);
+  align-items: center;
+}
+
+.wEmoji { font-size: 22px; }
 
 .weather,
 .notes {
