@@ -4,6 +4,7 @@ import { useMapStore }     from '../../store/mapStore.js';
 import { useGeolocation }  from '../../hooks/useGeolocation.js';
 import { FISHING_TYPES }   from '../../utils/fishingTips.js';
 import { fetchWeather }    from '../../utils/weather.js';
+import FishPicker from '../Fish/FishPicker.jsx';
 import styles from './SessionForm.module.css';
 
 const CONDITIONS = [
@@ -42,6 +43,8 @@ export default function SessionForm({ onClose }) {
   const [wWind,      setWWind]      = useState('');
   const [wWindDir,   setWWindDir]   = useState('');
   const [wPressure,  setWPressure]  = useState('');
+  const [targetFish,   setTargetFish]   = useState('');
+  const [showFishPick, setShowFishPick] = useState(false);
   const [fetching,   setFetching]   = useState(false);
   const [fetchMsg,   setFetchMsg]   = useState('');
 
@@ -83,6 +86,7 @@ export default function SessionForm({ onClose }) {
       fishingType:  fishingType  || null,
       spotId:       spotId       ? +spotId : null,
       locationName: locationName.trim() || selectedSpot?.name || null,
+      targetFish:   targetFish   || null,
       weather,
       notes: notes.trim() || null,
     });
@@ -105,6 +109,12 @@ export default function SessionForm({ onClose }) {
             </button>
           ))}
         </div>
+
+        {/* Целевая рыба */}
+        <label>Целевая рыба</label>
+        <button type="button" className={styles.fishPickBtn} onClick={() => setShowFishPick(true)}>
+          {targetFish || <span className={styles.fishPickPlaceholder}>Выбрать рыбу…</span>}
+        </button>
 
         {/* Дата и время */}
         <label>Дата и время</label>
@@ -180,6 +190,13 @@ export default function SessionForm({ onClose }) {
           <button type="submit">Сохранить</button>
         </div>
       </form>
+      {showFishPick && (
+        <FishPicker
+          value={targetFish}
+          onChange={setTargetFish}
+          onClose={() => setShowFishPick(false)}
+        />
+      )}
     </div>
   );
 }

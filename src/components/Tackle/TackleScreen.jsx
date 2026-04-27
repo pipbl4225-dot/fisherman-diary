@@ -7,6 +7,8 @@ import TackleCard   from './TackleCard.jsx';
 import TackleForm   from './TackleForm.jsx';
 import RigEditor    from './RigEditor.jsx';
 import SetupEditor  from './SetupEditor.jsx';
+import RigBuilder   from './RigBuilder.jsx';
+import FishList     from '../Fish/FishList.jsx';
 import styles from './TackleScreen.module.css';
 
 const TYPES = ['Все', 'Удилище', 'Катушка', 'Леска', 'Шнур', 'Крючок', 'Приманка', 'Поплавок', 'Грузило', 'Мормышка', 'Прочее'];
@@ -16,7 +18,7 @@ export default function TackleScreen() {
   const { rigs,    loadRigs,    deleteRig }     = useRigStore();
   const { setups,  loadSetups,  deleteSetup }   = useSetupStore();
 
-  const [tab,       setTab]       = useState('gear');   // 'gear' | 'rigs' | 'setups'
+  const [tab,       setTab]       = useState('gear');   // 'gear' | 'rigs' | 'setups' | 'montage' | 'fish'
   const [showForm,  setShowForm]  = useState(false);
   const [editItem,  setEditItem]  = useState(null);
   const [editRig,         setEditRig]         = useState(null);
@@ -50,26 +52,19 @@ export default function TackleScreen() {
   return (
     <div className={styles.screen}>
       <header className={styles.header}>
-        <h2>Снасти</h2>
-        {tab === 'gear' && <button onClick={() => setShowForm(true)}>+ Снасть</button>}
-        {tab === 'rigs'   && <button onClick={() => { setEditRig(null); setShowRigEditor(true); }}>+ Оснастка</button>}
-        {tab === 'setups' && <button onClick={() => { setEditSetup(null); setShowSetupEditor(true); }}>+ Сборка</button>}
+        <h2>Рюкзак</h2>
+        {tab === 'gear'    && <button onClick={() => setShowForm(true)}>+ Снасть</button>}
+        {tab === 'rigs'    && <button onClick={() => { setEditRig(null); setShowRigEditor(true); }}>+ Огрузка</button>}
+        {tab === 'setups'  && <button onClick={() => { setEditSetup(null); setShowSetupEditor(true); }}>+ Сборка</button>}
       </header>
 
       {/* Переключатель вкладок */}
       <div className={styles.tabs}>
-        <button
-          className={`${styles.tab} ${tab === 'gear' ? styles.activeTab : ''}`}
-          onClick={() => setTab('gear')}
-        >Инвентарь</button>
-        <button
-          className={`${styles.tab} ${tab === 'rigs' ? styles.activeTab : ''}`}
-          onClick={() => setTab('rigs')}
-        >Огрузка</button>
-        <button
-          className={`${styles.tab} ${tab === 'setups' ? styles.activeTab : ''}`}
-          onClick={() => setTab('setups')}
-        >Сборки</button>
+        <button className={`${styles.tab} ${tab === 'gear'    ? styles.activeTab : ''}`} onClick={() => setTab('gear')}>Инвентарь</button>
+        <button className={`${styles.tab} ${tab === 'rigs'    ? styles.activeTab : ''}`} onClick={() => setTab('rigs')}>Огрузка</button>
+        <button className={`${styles.tab} ${tab === 'setups'  ? styles.activeTab : ''}`} onClick={() => setTab('setups')}>Сборки</button>
+        <button className={`${styles.tab} ${tab === 'montage' ? styles.activeTab : ''}`} onClick={() => setTab('montage')}>Монтаж</button>
+        <button className={`${styles.tab} ${tab === 'fish'    ? styles.activeTab : ''}`} onClick={() => setTab('fish')}>Рыбы</button>
       </div>
 
       {/* --- Инвентарь --- */}
@@ -155,6 +150,12 @@ export default function TackleScreen() {
           )}
         </>
       )}
+
+      {/* --- Монтаж --- */}
+      {tab === 'montage' && <RigBuilder tackles={tackles} />}
+
+      {/* --- Рыбы --- */}
+      {tab === 'fish' && <FishList />}
 
       {showForm && (
         <TackleForm item={editItem} onClose={() => { setShowForm(false); setEditItem(null); }} />

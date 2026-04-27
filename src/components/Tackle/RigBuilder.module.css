@@ -1,0 +1,296 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-xl);
+}
+
+/* ── Выбор типа монтажа ── */
+.typeRow {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.typeRow::-webkit-scrollbar { display: none; }
+
+.typeBtn {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: var(--radius-lg);
+  padding: 8px 12px;
+  font-size: 11px;
+  min-width: 72px;
+  box-shadow: var(--shadow-sm);
+}
+.typeEmoji { font-size: 20px; }
+.typeLabel { text-align: center; line-height: 1.2; }
+
+.typeBtnActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+}
+
+/* ── Совет ── */
+.tipBar {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+  background: rgba(77,158,255,0.07);
+  border: 1px solid rgba(77,158,255,0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+.tipBar span { font-size: 16px; flex-shrink: 0; }
+.tipBar p { margin: 0; }
+
+/* ── Схема ── */
+.diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0 var(--spacing-sm);
+}
+
+/* Линия (лесочный сегмент) */
+.lineSegment {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 0 6px;
+  min-height: 28px;
+}
+.lineBar {
+  width: 2px;
+  min-height: 28px;
+  background: var(--nc, #4dabf7);
+  border-radius: 1px;
+  margin-left: 19px;
+  flex-shrink: 0;
+}
+.lineLabel {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Коннектор между узлами */
+.connector {
+  width: 2px;
+  height: 12px;
+  background: var(--nc, #4dabf7);
+  margin-left: 19px;
+  border-radius: 1px;
+}
+
+/* Боковая заметка */
+.sideNote {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding-left: 24px;
+  margin: -4px 0 4px;
+}
+.sideLine {
+  width: 24px;
+  height: 2px;
+  background: var(--nc, #a9e34b);
+  border-radius: 1px;
+}
+.sideText {
+  font-size: 12px;
+  color: var(--nc, #a9e34b);
+  background: rgba(169, 227, 75, 0.1);
+  border: 1px solid var(--nc, #a9e34b);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  line-height: 1.3;
+}
+
+/* Узел */
+.nodeWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px var(--spacing-md);
+  text-align: left;
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  font-weight: 400;
+  transition: border-color 0.15s;
+}
+.node:hover { border-color: var(--color-accent); }
+
+.nodeOptional {
+  opacity: 0.7;
+  border-style: dashed;
+}
+
+.nodeOpen {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+
+.nodeText {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nodeLabel {
+  font-size: 13px;
+  color: var(--color-heading);
+  font-weight: 500;
+}
+
+.optBadge {
+  font-size: 10px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  padding: 1px 5px;
+  border-radius: 10px;
+}
+
+.nodeArrow {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.nodeHint {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-top: -2px;
+}
+
+/* ── Формы узлов ── */
+.shapeBar {
+  width: 20px;
+  height: 6px;
+  background: var(--nc);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.shapeFloat {
+  width: 14px;
+  height: 28px;
+  border-radius: 50% 50% 40% 40%;
+  background: var(--nc);
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+}
+
+.shapeShots {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.shapeShots span {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--nc);
+}
+
+.shapeDot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--nc);
+  flex-shrink: 0;
+}
+
+.shapeDotSm {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--nc);
+  flex-shrink: 0;
+  margin: 0 3px;
+}
+
+.shapeSwivel {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--nc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #000;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.shapeHook {
+  width: 20px;
+  height: 22px;
+  border: 3px solid var(--nc);
+  border-radius: 0 0 50% 50%;
+  border-top: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--nc);
+  flex-shrink: 0;
+}
+
+.shapeFeeder {
+  width: 22px;
+  height: 16px;
+  background: var(--nc);
+  border-radius: var(--radius-sm);
+  border: 2px solid rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+
+.shapeSleeve {
+  width: 28px;
+  height: 8px;
+  background: var(--nc);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.shapeSinker {
+  width: 14px;
+  height: 18px;
+  background: var(--nc);
+  border-radius: 50% 50% 40% 40%;
+  transform: rotate(180deg);
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+}

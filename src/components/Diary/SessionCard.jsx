@@ -34,6 +34,7 @@ export default function SessionCard({ session, catchCount, onClick }) {
         </div>
       </div>
       <div className={styles.location}>{session.locationName || 'Место не указано'}</div>
+      {session.targetFish && <p className={styles.targetFish}>🎯 {session.targetFish}</p>}
       {wStr && <p className={styles.weatherLine}>{wStr}</p>}
       {session.notes && <p className={styles.notes}>{session.notes}</p>}
     </li>

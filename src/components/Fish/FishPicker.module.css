@@ -1,0 +1,133 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.sheet {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85svh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top: 1px solid var(--color-border);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-heading);
+}
+
+.closeBtn {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 14px;
+  border-radius: 50%;
+}
+
+.searchWrap {
+  padding: var(--spacing-sm) var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.search {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 15px;
+  width: 100%;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: var(--spacing-xs) 0 var(--spacing-lg);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.item.selected {
+  background: var(--color-accent-dim);
+}
+
+.itemBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: transparent;
+  color: var(--color-text);
+  font-weight: 400;
+  text-align: left;
+  padding: 10px var(--spacing-md);
+  border-radius: 0;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.itemName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.itemLatin {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.infoBtn {
+  background: transparent;
+  color: var(--color-accent);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 10px var(--spacing-md);
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.notFound {
+  padding: var(--spacing-xs) 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}

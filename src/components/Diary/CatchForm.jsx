@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { db } from '../../db/index.js';
 import { useSetupStore } from '../../store/setupStore.js';
+import FishPicker from '../Fish/FishPicker.jsx';
 import styles from './CatchForm.module.css';
 
 const nowTime = () => new Date().toTimeString().slice(0, 5);
@@ -34,10 +35,11 @@ export default function CatchForm({ sessionId, spotId, onClose }) {
   const [setupId,   setSetupId]   = useState('');
   const [catchTime, setCatchTime] = useState(nowTime());
 
-  const [catchPhoto, setCatchPhoto] = useState(null);
-  const [spotPhoto,  setSpotPhoto]  = useState(null);
-  const [photoX,     setPhotoX]     = useState(null);
-  const [photoY,     setPhotoY]     = useState(null);
+  const [catchPhoto,   setCatchPhoto]   = useState(null);
+  const [spotPhoto,    setSpotPhoto]    = useState(null);
+  const [photoX,       setPhotoX]       = useState(null);
+  const [photoY,       setPhotoY]       = useState(null);
+  const [showFishPick, setShowFishPick] = useState(false);
 
   useEffect(() => { loadSetups(); }, [loadSetups]);
 
@@ -93,8 +95,9 @@ export default function CatchForm({ sessionId, spotId, onClose }) {
         <div className={styles.row2}>
           <div className={styles.field}>
             <label>Вид *</label>
-            <input autoFocus value={species} onChange={(e) => setSpecies(e.target.value)}
-              placeholder="Щука, карась…" required />
+            <button type="button" className={styles.fishPickBtn} onClick={() => setShowFishPick(true)}>
+              {species || <span className={styles.fishPickPlaceholder}>Выбрать рыбу…</span>}
+            </button>
           </div>
           <div className={styles.field}>
             <label>Время</label>
@@ -176,9 +179,17 @@ export default function CatchForm({ sessionId, spotId, onClose }) {
 
         <div className={styles.actions}>
           <button type="button" className={styles.cancel} onClick={onClose}>Отмена</button>
-          <button type="submit">Сохранить</button>
+          <button type="submit" disabled={!species}>Сохранить</button>
         </div>
       </form>
+
+      {showFishPick && (
+        <FishPicker
+          value={species}
+          onChange={setSpecies}
+          onClose={() => setShowFishPick(false)}
+        />
+      )}
     </div>
   );
 }
