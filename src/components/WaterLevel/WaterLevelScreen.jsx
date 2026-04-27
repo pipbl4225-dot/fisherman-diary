@@ -1,129 +1,94 @@
-import { useEffect, useState, useRef } from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale, LinearScale, PointElement, LineElement,
-  Title, Tooltip, Legend, Filler,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { useGeolocation } from '../../hooks/useGeolocation.js';
+import { useEffect, useState } from 'react';
+import { useGeolocation }    from '../../hooks/useGeolocation.js';
+import { findNearest }       from '../../utils/gaugesList.js';
+import { fetchGaugeLevel }   from '../../utils/allrivers.js';
 import styles from './WaterLevelScreen.module.css';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+const HISTORY_KEY = 'water_level_history'; // { slug, level, ts }[]
 
-async function fetchFloodData(lat, lng) {
-  const url =
-    `https://flood-api.open-meteo.com/v1/flood` +
-    `?latitude=${lat}&longitude=${lng}` +
-    `&daily=river_discharge` +
-    `&past_days=60&forecast_days=7` +
-    `&timezone=auto`;
-  const res  = await fetch(url);
-  const data = await res.json();
-  return data.daily ?? null;
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) ?? '[]'); }
+  catch { return []; }
 }
 
-function trendIcon(vals) {
-  if (vals.length < 3) return '—';
-  const last  = vals[vals.length - 1];
-  const prev3 = vals.slice(-4, -1).reduce((s, v) => s + v, 0) / 3;
-  const pct   = (last - prev3) / (Math.abs(prev3) || 1) * 100;
-  if (pct >  5) return '↑';
-  if (pct < -5) return '↓';
-  return '→';
+function saveReading(slug, level) {
+  const hist = loadHistory().filter((r) => r.slug === slug).slice(-10);
+  hist.push({ slug, level, ts: Date.now() });
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(
+    [...loadHistory().filter((r) => r.slug !== slug), ...hist]
+  ));
 }
 
-function trendColor(icon) {
-  if (icon === '↑') return '#f03e3e';
-  if (icon === '↓') return '#4dabf7';
-  return '#69db7c';
+function trendFromHistory(slug, current) {
+  const hist = loadHistory()
+    .filter((r) => r.slug === slug)
+    .sort((a, b) => a.ts - b.ts);
+  if (hist.length < 2) return null;
+  const prev = hist[hist.length - 2].level;
+  const diff = current - prev;
+  return diff;
 }
 
-function levelPercent(vals) {
-  if (!vals.length) return 50;
-  const min = Math.min(...vals);
-  const max = Math.max(...vals);
-  const cur = vals[vals.length - 1];
-  if (max === min) return 50;
-  return Math.round(((cur - min) / (max - min)) * 100);
+function levelLabel(diff) {
+  if (diff === null)  return { icon: '→', text: 'Нет данных о тренде', color: '#69db7c' };
+  if (diff > 5)       return { icon: '↑', text: `Растёт (+${diff} см)`,  color: '#f03e3e' };
+  if (diff < -5)      return { icon: '↓', text: `Падает (${diff} см)`,   color: '#4dabf7' };
+  return               { icon: '→', text: 'Стабильно',                   color: '#69db7c' };
 }
 
-function levelLabel(pct) {
-  if (pct >= 75) return { text: 'Высокий', color: '#f03e3e' };
-  if (pct >= 50) return { text: 'Средний', color: '#ffa94d' };
-  if (pct >= 25) return { text: 'Ниже среднего', color: '#69db7c' };
-  return              { text: 'Низкий',  color: '#4dabf7' };
-}
-
-function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-}
-
-function fmtFlow(v) {
-  if (v == null) return '—';
-  if (v >= 1000) return `${(v / 1000).toFixed(1)} тыс. м³/с`;
-  return `${v.toFixed(1)} м³/с`;
+function fishAdvice(diff) {
+  if (diff === null)  return { icon: '✅', title: 'Актуальный уровень', text: 'Откройте приложение повторно через несколько часов — станет виден тренд.' };
+  if (diff > 5)       return { icon: '🌊', title: 'Вода прибывает',     text: 'Рыба смещается к затопленным кустам и траве. Ловите у берега с медленной проводкой. Хороший клёв щуки и окуня в залитых зарослях.' };
+  if (diff < -5)      return { icon: '🏖',  title: 'Вода убывает',      text: 'Рыба концентрируется на ямах и бровках. Уменьшайте снасть, ловите на дно. Клёв осторожный — лёгкий груз и тонкий поводок.' };
+  return               { icon: '✅', title: 'Стабильный уровень',        text: 'Оптимальное состояние. Рыба стоит на привычных местах. Используйте стандартные методы для текущего сезона.' };
 }
 
 export default function WaterLevelScreen() {
   const { position } = useGeolocation();
-  const [data,    setData]    = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState(null);
-  const [loaded,  setLoaded]  = useState(false);
 
+  const [candidates, setCandidates] = useState([]);
+  const [slug,       setSlug]       = useState(() => localStorage.getItem('selected_gauge_slug') ?? null);
+  const [data,       setData]       = useState(null);   // { level, unit, date, temp }
+  const [loading,    setLoading]    = useState(false);
+  const [error,      setError]      = useState(null);
+  const [showList,   setShowList]   = useState(false);
+
+  // Найти ближайшие посты
   useEffect(() => {
-    if (!position || loaded) return;
+    if (!position) return;
+    const nearby = findNearest(position.lat, position.lng, 5);
+    setCandidates(nearby);
+    if (!slug && nearby.length > 0) {
+      const first = nearby[0].slug;
+      localStorage.setItem('selected_gauge_slug', first);
+      setSlug(first);
+    }
+  }, [position?.lat, position?.lng]);
+
+  // Загрузить уровень
+  useEffect(() => {
+    if (!slug) return;
     setLoading(true);
-    setLoaded(true);
-    fetchFloodData(position.lat, position.lng)
-      .then((d) => { setData(d); setLoading(false); })
-      .catch(() => { setError('Нет данных для этой точки'); setLoading(false); });
-  }, [position, loaded]);
+    setError(null);
+    setData(null);
+    fetchGaugeLevel(slug).then((d) => {
+      setLoading(false);
+      if (!d) { setError('Нет данных для этого гидропоста'); return; }
+      setData(d);
+      saveReading(slug, d.level);
+    });
+  }, [slug]);
 
-  const discharge = data?.river_discharge ?? [];
-  const times     = data?.time ?? [];
+  const gauge   = candidates.find((c) => c.slug === slug) ?? null;
+  const diff    = data ? trendFromHistory(slug, data.level) : null;
+  const trend   = levelLabel(diff);
+  const advice  = fishAdvice(diff);
 
-  // Последние 60 дней для отображения
-  const showN     = 30;
-  const chartDis  = discharge.slice(-showN);
-  const chartTime = times.slice(-showN);
-
-  const current   = discharge[discharge.length - 1] ?? null;
-  const pct       = levelPercent(discharge);
-  const icon      = trendIcon(discharge);
-  const lbl       = levelLabel(pct);
-
-  const chartData = {
-    labels: chartTime.map((t) => fmtDate(t)),
-    datasets: [{
-      label: 'Расход воды (м³/с)',
-      data: chartDis,
-      borderColor: '#4dabf7',
-      backgroundColor: 'rgba(77,158,255,0.12)',
-      pointRadius: 2,
-      pointBackgroundColor: '#4dabf7',
-      tension: 0.4,
-      fill: true,
-    }],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { callbacks: {
-      label: (ctx) => ` ${ctx.parsed.y.toFixed(1)} м³/с`,
-    }}},
-    scales: {
-      x: { ticks: { color: '#768390', maxTicksLimit: 6, font: { size: 10 } }, grid: { color: '#1c2333' } },
-      y: { ticks: { color: '#768390', font: { size: 10 } }, grid: { color: '#1c2333' } },
-    },
-  };
-
-  // Прогноз (последние 7 записей — forecast)
-  const forecast = discharge.slice(-7).map((v, i) => ({
-    date: times[times.length - 7 + i],
-    val: v,
-  }));
+  function selectGauge(s) {
+    localStorage.setItem('selected_gauge_slug', s);
+    setSlug(s);
+    setShowList(false);
+  }
 
   return (
     <div className={styles.screen}>
@@ -134,14 +99,43 @@ export default function WaterLevelScreen() {
       {!position && !loading && (
         <div className={styles.noGeo}>
           <span>📍</span>
-          <p>Разрешите доступ к геолокации — данные подтянутся автоматически для вашего ближайшего водоёма.</p>
+          <p>Разрешите доступ к геолокации — ближайший гидропост подтянется автоматически.</p>
+        </div>
+      )}
+
+      {/* Выбор гидропоста */}
+      {candidates.length > 0 && (
+        <div className={styles.gaugeSection}>
+          <div className={styles.gaugeTitleRow}>
+            <span className={styles.gaugeLabel}>Гидропост</span>
+            <button className={styles.changeBtn} onClick={() => setShowList((v) => !v)}>
+              {showList ? 'Скрыть' : 'Сменить'}
+            </button>
+          </div>
+
+          {showList && (
+            <div className={styles.searchBox}>
+              <ul className={styles.searchList}>
+                {candidates.map((c) => (
+                  <li key={c.slug}>
+                    <button
+                      className={`${styles.searchItem} ${c.slug === slug ? styles.activeItem : ''}`}
+                      onClick={() => selectGauge(c.slug)}
+                    >
+                      {c.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
       {loading && (
         <div className={styles.loading}>
           <div className={styles.spinner} />
-          <p>Загружаю данные…</p>
+          <p>Загружаю данные гидропоста…</p>
         </div>
       )}
 
@@ -152,93 +146,82 @@ export default function WaterLevelScreen() {
         </div>
       )}
 
-      {current != null && !loading && (
+      {data && !loading && (
         <>
-          {/* ── Датчик ── */}
-          <div className={styles.gaugeCard}>
-            <div className={styles.gaugeLeft}>
-              <span className={styles.gaugeTitle}>Расход воды</span>
-              <span className={styles.gaugeVal}>{fmtFlow(current)}</span>
-              <span className={styles.gaugeSub} style={{ color: lbl.color }}>
-                {lbl.text}
-              </span>
-              <span className={styles.gaugeSrc}>
-                Open-Meteo · {position?.lat.toFixed(2)}, {position?.lng.toFixed(2)}
-              </span>
+          {/* Карточка уровня */}
+          <div className={styles.liveCard}>
+            <div className={styles.liveHeader}>
+              <span className={styles.gaugeName}>{gauge?.name ?? slug}</span>
+              <a
+                className={styles.extLink}
+                href={`https://allrivers.info/gauge/${slug}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                allrivers.info ↗
+              </a>
             </div>
 
-            <div className={styles.gaugeRight}>
-              {/* Вертикальный датчик */}
-              <div className={styles.tank}>
-                <div
-                  className={styles.tankFill}
-                  style={{
-                    height: `${pct}%`,
-                    background: `linear-gradient(to top, ${lbl.color}88, ${lbl.color})`,
-                  }}
-                />
-                <div className={styles.tankPct}>{pct}%</div>
+            <div className={styles.liveData}>
+              <span className={styles.liveValue}>
+                {data.level > 0 ? '+' : ''}{data.level} <small>см</small>
+              </span>
+              <div style={{ color: trend.color, fontWeight: 700, fontSize: 22 }}>
+                {trend.icon}
               </div>
-              {/* Тренд */}
-              <div className={styles.trend} style={{ color: trendColor(icon) }}>
-                <span className={styles.trendIcon}>{icon}</span>
-                <span className={styles.trendLabel}>
-                  {icon === '↑' ? 'Растёт' : icon === '↓' ? 'Падает' : 'Стабильно'}
-                </span>
-              </div>
+              <span style={{ color: trend.color, fontSize: 13 }}>{trend.text}</span>
+            </div>
+
+            <div className={styles.liveMeta}>
+              {data.date && <span>📅 {data.date}</span>}
+              {data.temp != null && <span>🌡 {data.temp} °C</span>}
             </div>
           </div>
 
-          {/* ── График 30 дней ── */}
-          {chartDis.length > 2 && (
-            <section className={styles.chartSection}>
-              <h4 className={styles.sectionTitle}>📈 30 дней</h4>
-              <div className={styles.chartWrap}>
-                <Line data={chartData} options={chartOptions} />
+          {/* Визуальный датчик */}
+          <div className={styles.tankCard}>
+            <div className={styles.tankWrap}>
+              <div className={styles.tankScale}>
+                <span>▲</span>
+                <span>0</span>
+                <span>▼</span>
               </div>
-            </section>
-          )}
-
-          {/* ── Прогноз 7 дней ── */}
-          <section className={styles.forecastSection}>
-            <h4 className={styles.sectionTitle}>🔭 Прогноз на 7 дней</h4>
-            <div className={styles.forecastRow}>
-              {forecast.map((f) => {
-                const fPct = levelPercent([...discharge.slice(-60), f.val]);
-                const fLbl = levelLabel(fPct);
-                return (
-                  <div key={f.date} className={styles.forecastDay}>
-                    <span className={styles.forecastDate}>
-                      {new Date(f.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' })}
-                    </span>
-                    <div className={styles.forecastBar}>
-                      <div className={styles.forecastFill}
-                        style={{ height: `${fPct}%`, background: fLbl.color }} />
-                    </div>
-                    <span className={styles.forecastVal}>{f.val?.toFixed(0)}</span>
-                  </div>
-                );
-              })}
+              <div className={styles.tank}>
+                {/* Нулевая линия */}
+                <div className={styles.zeroLine} />
+                {/* Заливка выше/ниже нуля */}
+                {data.level >= 0 ? (
+                  <div
+                    className={styles.tankFillPos}
+                    style={{
+                      height: `${Math.min(data.level / 3, 50)}%`,
+                      background: data.level > 150 ? '#f03e3e' : '#4dabf7',
+                    }}
+                  />
+                ) : (
+                  <div
+                    className={styles.tankFillNeg}
+                    style={{
+                      height: `${Math.min(Math.abs(data.level) / 3, 50)}%`,
+                      background: '#a9e34b',
+                    }}
+                  />
+                )}
+              </div>
+              <div className={styles.tankLabel}>{data.level > 0 ? '+' : ''}{data.level} см</div>
             </div>
-            <p className={styles.forecastNote}>м³/с · данные гидрологической модели Open-Meteo</p>
-          </section>
+            <p className={styles.tankHint}>
+              Уровень воды относительно нуля графика гидропоста.
+              Значения выше нуля — прибыль, ниже — убыль.
+            </p>
+          </div>
 
-          {/* ── Рекомендация рыболову ── */}
-          <div className={`${styles.adviceCard} ${pct >= 75 ? styles.adviceHigh : pct <= 25 ? styles.adviceLow : ''}`}>
-            <span className={styles.adviceIcon}>
-              {pct >= 75 ? '🌊' : pct <= 25 ? '🏖' : '✅'}
-            </span>
+          {/* Рекомендация рыболову */}
+          <div className={styles.adviceCard}>
+            <span className={styles.adviceIcon}>{advice.icon}</span>
             <div>
-              <strong>
-                {pct >= 75 ? 'Высокий уровень' : pct <= 25 ? 'Низкая вода' : 'Нормальный уровень'}
-              </strong>
-              <p className={styles.adviceText}>
-                {pct >= 75
-                  ? 'Рыба ушла в затопленные кусты и травы. Ловите у берега с медленной проводкой. Хороший клёв щуки и окуня в залитых зарослях.'
-                  : pct <= 25
-                  ? 'Рыба сконцентрирована в ямах и глубоких местах. Ловите на бровках и у коряжника. Клёв осторожный — уменьшайте снасть.'
-                  : 'Оптимальный уровень. Рыба распределена по привычным местам. Используйте стандартные методы для текущего сезона.'}
-              </p>
+              <strong>{advice.title}</strong>
+              <p className={styles.adviceText}>{advice.text}</p>
             </div>
           </div>
         </>
